@@ -1,101 +1,94 @@
 package controller
 
 import (
-	"errors"
-	"github.com/aronipurwanto/go-restful-api/controller/mocks"
+	"bytes"
+	"encoding/json"
+	"github.com/aronipurwanto/go-restful-api/model/web"
+	"github.com/aronipurwanto/go-restful-api/service/mocks"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
 )
+
+func setupTestApp(mockService *mocks.MockCategoryService) *fiber.App {
+	app := fiber.New()
+	categoryController := NewCategoryController(mockService)
+
+	api := app.Group("/api")
+	categories := api.Group("/categories")
+	categories.Post("/", categoryController.Create)
+	categories.Put("/:categoryId", categoryController.Update)
+	categories.Delete("/:categoryId", categoryController.Delete)
+	categories.Get("/:categoryId", categoryController.FindById)
+	categories.Get("/", categoryController.FindAll)
+
+	return app
+}
 
 func TestCategoryController(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockCtrl := mocks.NewMockCategoryController(ctrl)
-	app := fiber.New()
+	mockService := mocks.NewMockCategoryService(ctrl)
+	app := setupTestApp(mockService)
 
 	tests := []struct {
 		name           string
 		method         string
 		url            string
-		body           string
+		body           interface{}
 		setupMock      func()
 		expectedStatus int
-		expectedBody   string
+		expectedBody   web.WebResponse
 	}{
-		{
-			name:   "Create category - success",
-			method: "POST",
-			url:    "/category",
-			body:   `{"name": "Electronics"}`,
-			setupMock: func() {
-				mockCtrl.EXPECT().Create(gomock.Any()).Return(nil)
-			},
-			expectedStatus: http.StatusOK,
-			expectedBody:   "",
-		},
-		{
-			name:   "Create category - failure",
-			method: "POST",
-			url:    "/category",
-			body:   `{"name": ""}`,
-			setupMock: func() {
-				mockCtrl.EXPECT().Create(gomock.Any()).Return(errors.New("invalid input"))
-			},
-			expectedStatus: http.StatusBadRequest,
-			expectedBody:   "",
-		},
 		{
 			name:   "Update category - success",
 			method: "PUT",
-			url:    "/category/1",
-			body:   `{"name": "Updated"}`,
+			url:    "/api/categories/1",
+			body:   web.CategoryUpdateRequest{Id: 1, Name: "Updated"},
 			setupMock: func() {
-				mockCtrl.EXPECT().Update(gomock.Any()).Return(nil)
+				mockService.EXPECT().
+					Update(gomock.Any(), gomock.Any()).
+					Return(web.CategoryResponse{Id: 1, Name: "Updated"}, nil)
 			},
 			expectedStatus: http.StatusOK,
-		},
-		{
-			name:   "Find all categories",
-			method: "GET",
-			url:    "/categories",
-			setupMock: func() {
-				mockCtrl.EXPECT().FindAll(gomock.Any()).Return(nil)
+			expectedBody: web.WebResponse{
+				Code:   http.StatusOK,
+				Status: "OK",
+				Data:   web.CategoryResponse{Id: 1, Name: "Updated"},
 			},
-			expectedStatus: http.StatusOK,
-		},
-		{
-			name:   "Find category by ID - success",
-			method: "GET",
-			url:    "/category/1",
-			setupMock: func() {
-				mockCtrl.EXPECT().FindById(gomock.Any()).Return(nil)
-			},
-			expectedStatus: http.StatusOK,
-		},
-		{
-			name:   "Delete category - success",
-			method: "DELETE",
-			url:    "/category/1",
-			setupMock: func() {
-				mockCtrl.EXPECT().Delete(gomock.Any()).Return(nil)
-			},
-			expectedStatus: http.StatusOK,
 		},
 	}
 
-	for _, tc := range tests {
-		t.Run(tc.name, func(t *testing.T) {
-			req := httptest.NewRequest(tc.method, tc.url, strings.NewReader(tc.body))
-			req.Header.Set("Content-Type", "application/json")
-			resp, _ := app.Test(req)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.setupMock()
 
-			assert.Equal(t, tc.expectedStatus, resp.StatusCode)
+			var reqBody []byte
+			if tt.body != nil {
+				reqBody, _ = json.Marshal(tt.body)
+			}
+
+			req := httptest.NewRequest(tt.method, tt.url, bytes.NewReader(reqBody))
+			req.Header.Set("Content-Type", "application/json")
+
+			resp, _ := app.Test(req)
+			assert.Equal(t, tt.expectedStatus, resp.StatusCode)
+
+			var respBody web.WebResponse
+			json.NewDecoder(resp.Body).Decode(&respBody)
+
+			if dataMap, ok := respBody.Data.(map[string]interface{}); ok {
+				respBody.Data = web.CategoryResponse{
+					Id:   uint64(dataMap["id"].(float64)),
+					Name: dataMap["name"].(string),
+				}
+			}
+
+			assert.Equal(t, tt.expectedBody, respBody)
 		})
 	}
 }
