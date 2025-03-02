@@ -31,9 +31,14 @@ func main() {
 	categoryRepository := repository.NewCategoryRepository(db)
 	categoryService := service.NewCategoryService(categoryRepository, validate)
 	categoryController := controller.NewCategoryController(categoryService)
+	productRepository := repository.NewCategoryRepository(db)
+	productService := service.NewCategoryService(productRepository, validate)
+	productController := controller.NewCategoryController(productService)
+
+	controllers := app.NewController(categoryController, productController)
 
 	// Setup Routes
-	app.NewRouter(server, categoryController)
+	app.NewRouter(server, controllers)
 
 	// Start Server
 	log.Println("Server running on port 8080")
