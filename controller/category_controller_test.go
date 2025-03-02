@@ -3,14 +3,15 @@ package controller
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/aronipurwanto/go-restful-api/model/web"
-	"github.com/aronipurwanto/go-restful-api/service/mocks"
-	"github.com/gofiber/fiber/v2"
-	"github.com/stretchr/testify/assert"
-	"go.uber.org/mock/gomock"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/kyraslab/go-restful-api-test/model/web"
+	"github.com/kyraslab/go-restful-api-test/service/mocks"
+	"github.com/stretchr/testify/assert"
+	"go.uber.org/mock/gomock"
 )
 
 func setupCategoryTestApp(mockService *mocks.MockCategoryService) *fiber.App {

@@ -2,7 +2,8 @@ package repository
 
 import (
 	"context"
-	"github.com/aronipurwanto/go-restful-api/model/domain"
+
+	"github.com/kyraslab/go-restful-api-test/model/domain"
 )
 
 type ProductRepository interface {

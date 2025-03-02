@@ -1,9 +1,9 @@
 package app
 
 import (
-	"github.com/aronipurwanto/go-restful-api/controller"
-	"github.com/aronipurwanto/go-restful-api/middleware"
 	"github.com/gofiber/fiber/v2"
+	"github.com/kyraslab/go-restful-api-test/controller"
+	"github.com/kyraslab/go-restful-api-test/middleware"
 )
 
 type Controller struct {

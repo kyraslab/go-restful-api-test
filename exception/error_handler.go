@@ -1,10 +1,11 @@
 package exception
 
 import (
-	"github.com/aronipurwanto/go-restful-api/helper"
-	"github.com/aronipurwanto/go-restful-api/model/web"
-	"github.com/go-playground/validator/v10"
 	"net/http"
+
+	"github.com/go-playground/validator/v10"
+	"github.com/kyraslab/go-restful-api-test/helper"
+	"github.com/kyraslab/go-restful-api-test/model/web"
 )
 
 func ErrorHandler(writer http.ResponseWriter, request *http.Request, err interface{}) {

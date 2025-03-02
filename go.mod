@@ -1,4 +1,4 @@
-module github.com/aronipurwanto/go-restful-api
+module github.com/kyraslab/go-restful-api-test
 
 go 1.23.2
 
@@ -6,7 +6,6 @@ require (
 	github.com/go-playground/validator/v10 v10.9.0
 	github.com/go-sql-driver/mysql v1.9.0
 	github.com/gofiber/fiber/v2 v2.52.6
-	github.com/golang/mock v1.6.0
 	github.com/stretchr/testify v1.9.0
 	go.uber.org/mock v0.5.0
 	gorm.io/driver/mysql v1.5.7

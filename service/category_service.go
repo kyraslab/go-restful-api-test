@@ -2,7 +2,8 @@ package service
 
 import (
 	"context"
-	"github.com/aronipurwanto/go-restful-api/model/web"
+
+	"github.com/kyraslab/go-restful-api-test/model/web"
 )
 
 type CategoryService interface {

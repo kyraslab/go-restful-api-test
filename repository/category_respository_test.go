@@ -3,11 +3,12 @@ package repository
 import (
 	"context"
 	"errors"
-	"github.com/aronipurwanto/go-restful-api/model/domain"
-	"github.com/aronipurwanto/go-restful-api/repository/mocks"
+	"testing"
+
+	"github.com/kyraslab/go-restful-api-test/model/domain"
+	"github.com/kyraslab/go-restful-api-test/repository/mocks"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
-	"testing"
 )
 
 func TestCategoryRepository(t *testing.T) {

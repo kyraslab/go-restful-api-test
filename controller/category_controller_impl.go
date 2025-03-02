@@ -1,11 +1,12 @@
 package controller
 
 import (
-	"github.com/aronipurwanto/go-restful-api/exception"
-	"github.com/aronipurwanto/go-restful-api/model/web"
-	"github.com/aronipurwanto/go-restful-api/service"
-	"github.com/gofiber/fiber/v2"
 	"strconv"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/kyraslab/go-restful-api-test/exception"
+	"github.com/kyraslab/go-restful-api-test/model/web"
+	"github.com/kyraslab/go-restful-api-test/service"
 )
 
 type CategoryControllerImpl struct {

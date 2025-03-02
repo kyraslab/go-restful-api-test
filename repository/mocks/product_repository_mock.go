@@ -13,7 +13,7 @@ import (
 	context "context"
 	reflect "reflect"
 
-	domain "github.com/aronipurwanto/go-restful-api/model/domain"
+	domain "github.com/kyraslab/go-restful-api-test/model/domain"
 	gomock "go.uber.org/mock/gomock"
 )
 
